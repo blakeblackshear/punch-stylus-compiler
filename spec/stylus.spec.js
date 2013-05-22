@@ -1,6 +1,6 @@
 var stylus = require("stylus");
 var stylus_compiler = require("../lib/stylus");
-var mockStylus = require("../lib/mock-stylus");
+var mockStylus = require("./mock-stylus");
 
 describe("calling compile", function() {
 
