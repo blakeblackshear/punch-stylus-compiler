@@ -1,26 +1,32 @@
 var stylus = require("stylus");
 var stylus_compiler = require("../lib/stylus");
+var mockStylus = require("../lib/mock-stylus");
 
 describe("calling compile", function() {
 
-	it("pass the filename and path to stylus compiler", function() {
-		spyOn(stylus, "render");
+	it("pass the filename to stylus compiler", function() {
+		stylus_compiler.styl = mockStylus.mock;
 
 		var spyCallback = jasmine.createSpy();
 		stylus_compiler.compile("test", "sample/css/main.styl", spyCallback);
 
-		expect(stylus.render).toHaveBeenCalledWith("test", { "filename": "sample/css/main.styl", "paths": [ "sample/css" ] }, jasmine.any(Function));
+		expect(mockStylus.setCalls[0].name).toBe("filename");
+		expect(mockStylus.setCalls[0].value).toBe("sample/css/main.styl");
+	});
+
+	it("include the path in the stylus compiler", function() {
+		stylus_compiler.styl = mockStylus.mock;
+
+		var spyCallback = jasmine.createSpy();
+		stylus_compiler.compile("test", "sample/css/main.styl", spyCallback);
+
+		expect(mockStylus.includeCalls[0].path).toBe("sample/css");
 	});
 
 	it("calls the callback with the result", function(){
-		spyOn(stylus, "render").andCallFake(function(input, options, callback){
-			return callback(null, "rendered file");
-		});
-
 		var spyCallback = jasmine.createSpy();
 		stylus_compiler.compile("test", "sample.styl", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, "rendered file");
 	});
-
 });
